@@ -48,17 +48,28 @@ current template's prescribed filenames and preserve this relative order:
 Use one numeric Batch ID consistently in every populated member at its template
 position; in `EgpSystemItemsInterface.csv` it is the second CSV field.
 
+For a registered item batch (Manage Item Batches), instead populate
+`BATCH_NUMBER` with the batch Number in every populated member and leave
+`BATCH_ID` blank. In `EgpSystemItemsInterface.csv`, `BATCH_NUMBER` is the third
+CSV field. Oracle's control file resolves `BATCH_ID` from
+`EGI_IMPORT_BATCHES_B` at load time; it uses `-1` when the Number is not
+found. Never mix the two forms in one package. See `ora_design_advisory.md`
+for when a registered batch is required.
+
 ## Validation and Immutable Handoff
 
 Reopen the completed ZIP and fail closed unless it has safe root-level members,
 no duplicates or unexpected files, exact template-prescribed names and order,
 headerless CSV rows with exact field counts, valid values, coherent
-cross-file references, one Batch ID, and a SHA-256-bound preview.
+cross-file references, one batch reference (Batch ID or registered batch
+Number), and a SHA-256-bound preview.
 
 Hand that exact archive, without copying or changing it, to `core.data-loader`
 with task context and registered FBDI Data Loader business object `item`.
 Supply template provenance, ZIP digest, member manifest, row counts, mapping
-preview, and Batch ID as read-only evidence.
+preview, and batch reference as read-only evidence. For a registered batch,
+include both the batch Number and its internal `BATCH_ID`, which the Item
+Import *Batch Id* parameter requires.
 
 Do not upload the ZIP, call an ESS job, initiate or monitor an import, query a
 Fusion execution endpoint, construct execution parameters, or perform UCM

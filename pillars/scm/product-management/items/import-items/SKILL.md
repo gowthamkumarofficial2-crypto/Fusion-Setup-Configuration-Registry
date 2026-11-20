@@ -19,7 +19,7 @@ source_catalog: "knowledge/setup-task-catalog/effective/setupTasksAll.json"
 type: "import"
 execution_mode: "hybrid"
 owner_team: "SCM product management pillar team"
-version: "0.1.0"
+version: "0.2.0"
 inputs:
   - "implementation_objective"
   - "project_context"
@@ -111,6 +111,7 @@ same ZIP to `core.data-loader` for any later loader operation.
 Read `ora-resource/ora_fbdi_processing.md`, `ora-resource/ora_input_validation.md`,
 `ora-resource/ora_dependency_readiness.md`,
 `ora-resource/ora_defaulting_rules.md`,
+`ora-resource/ora_design_advisory.md`,
 `ora-resource/ora_error_handling.md`, and
 `ora-resource/ora_rule_registry.json` before preparing a package.
 
@@ -122,16 +123,30 @@ Read `ora-resource/ora_fbdi_processing.md`, `ora-resource/ora_input_validation.m
 3. Map each source fact to the current template. Resolve every required or
    ambiguous business value before generating CSV files. Apply documented
    defaults only where the task resources permit them.
+   - Assess the Product Hub data-quality matching risk
+     (`ora-resource/ora_design_advisory.md`):
+     - record the source system and its data-quality options;
+     - list new items that look like existing master-org items;
+     - agree the batch approach with the user before generating the package:
+       a registered item batch with New Item confirmation, or matching
+       deselected on the batch.
+   - Item Import can report Succeeded while matched items stay held with no
+     error.
 4. Generate headerless CSV members using the template's prescribed filenames,
    columns, field order, encoding, and ZIP-member order. Create the ZIP only
    in a customer-approved or controlled transient location.
 5. Reopen and validate the ZIP against the same template: safe root-level
    members, exact member names and order, field counts including trailing empty
-   fields, data types and constraints, coherent references, one numeric Batch
-   ID, and SHA-256-bound preview.
+   fields, data types and constraints, coherent references, one batch
+   reference, and SHA-256-bound preview. The batch reference is either one
+   numeric Batch ID, or one registered batch Number in `BATCH_NUMBER` with
+   `BATCH_ID` blank.
 6. Hand the validated ZIP unchanged to `core.data-loader` with task context,
    registered business object `item`, template provenance, ZIP digest, member
-   manifest, row counts, mapping preview, and Batch ID.
+   manifest, row counts, mapping preview, and the batch reference. For a
+   registered batch, include both the batch Number and the internal
+   `BATCH_ID`, which the Item Import *Batch Id* parameter requires. Include
+   the data-quality matching assessment as well.
 
 ## Immutable Handoff Boundary
 

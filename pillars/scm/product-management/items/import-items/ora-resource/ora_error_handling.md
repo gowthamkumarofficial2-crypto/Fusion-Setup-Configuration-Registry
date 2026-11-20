@@ -7,9 +7,13 @@
 | CSV or ZIP validation fails | Discard the incomplete transient artifact and regenerate after correcting the local issue. |
 | ZIP changes after validation | Restart template-driven validation and produce new handoff evidence. |
 | Handoff metadata is incomplete | Stop before handing the ZIP to `core.data-loader`. |
+| A later Item Import reports Succeeded but creates no items and logs no `EGP_IMPORT_ERRORS`; interface rows stay at `PROCESS_STATUS` 0 with `REQUEST_ID` set, plus item-level rows without organization at −1 | Classify it as a data-quality matching hold, not a package defect. Do not rebuild or resubmit the package. Route the items through a registered item batch and resolve the In Progress match actions (`ora_design_advisory.md`). |
+| Item batch In Progress rows show match action Confirm against an existing item number for items that must be new | Stop. Set New Item, Save, and re-check the item numbers before processing. Processing Confirm updates the existing item. |
+| A structure import reports "specified item does not exist" for parents whose item load reported success | Check the item batch for held matches before debugging the structure package. |
 
 Classify these failures as input validation, catalog mismatch, or artifact
-persistence. This skill does not perform authorization, upload, import,
+persistence. Classify a data-quality matching hold as an approval blocker: the
+items wait for a match decision. This skill does not perform authorization, upload, import,
 monitoring, ESS, or Fusion API operations; `core.data-loader` handles any
 later execution failure in its own workflow.
 
